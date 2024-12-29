@@ -1,6 +1,11 @@
+#include <ext/pb_ds/assoc_container.hpp> 
 #include <bits/stdc++.h>
-
+using namespace __gnu_pbds;
 using namespace std;
+
+template <typename T>
+using multi_set = tree<std::pair<T, int>, null_type, std::less<std::pair<T, int>>, rb_tree_tag, tree_order_statistics_node_update>;
+
 
 typedef pair<int, int> p;
 int main() {
@@ -26,23 +31,22 @@ int main() {
     });
     vector<int> contains(n, 0);
     vector<int> isContained(n, 0);
-    set<int> endTimes;
-    endTimes.insert(intervals.back().second);
-    int minEnd = intervals.back().second;
+    multi_set<int> endTimes;
+    endTimes.insert({intervals.back().second, endTimes.size()});
     for (int i = n - 2; i >= 0; i--) {
         auto interval = intervals[i];
-        if (interval.second >= minEnd) {
-            contains[intervalIndex[interval]] = 1;
-        }
-        minEnd = min(interval.second, minEnd);
+        int position = endTimes.order_of_key({interval.second, INT_MAX});
+        contains[intervalIndex[interval]] = position;
+        endTimes.insert({interval.second, endTimes.size()});
     }
-    int maxEnd = intervals[0].second;
+    endTimes = {};
+    assert(endTimes.size() == 0);
+    endTimes.insert({intervals.front().second, endTimes.size()});
     for (int i = 1; i < n; i++) {
         auto interval = intervals[i];
-        if (interval.second <= maxEnd) {
-            isContained[intervalIndex[interval]] = 1;
-        }
-        maxEnd = max(interval.second, maxEnd);
+        int position = endTimes.order_of_key({interval.second, INT_MIN});
+        isContained[intervalIndex[interval]] = endTimes.size() - position;
+        endTimes.insert({interval.second, endTimes.size()});
     }
     for (auto & b : contains) {
         cout<<b<<" ";
