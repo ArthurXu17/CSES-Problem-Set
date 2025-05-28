@@ -67,48 +67,21 @@ int main() {
     int i = n-1;
     int j = m - 1;
     while (i >= 0 && j >= 0) {
+        if (dp[i][j] == 0) {
+            break;
+        }
         dbg(i);
         dbg(j);
-        if (i > 0 && j > 0) {
-            if (a[i] == b[j]) {
-                r.push_back(a[i]);
-                i--;
-                j--;
-                dbg(r);
-            } else if (dp[i][j] == dp[i-1][j]){
-                i--;
-            } else {
-                assert(dp[i][j-1] == dp[i][j]);
-                j--;
-            }
-        } else if (i > 0) {
-            assert(j == 0);
-            if (dp[i][j] == dp[i-1][j] + 1) {
-                r.push_back(a[i]);
-                i--;
-                j--;
-                // terminates the loop
-            } else {
-                i--;
-            }
-        } else if (j > 0) {
-            assert(i == 0);
-            if (dp[i][j] == dp[i][j-1] + 1) {
-                r.push_back(b[j]);
-                i--;
-                j--;
-                // terminates the loop
-            } else {
-                j--;
-            }
+        if (a[i] == b[j]) {
+            r.push_back(a[i]);
+            i--;
+            j--;
+        } else if (i > 0 && dp[i][j] == dp[i-1][j]) {
+            i--;
+        } else if (j > 0 && dp[i][j] == dp[i][j-1]) {
+            j--;
         } else {
-            assert(i == 0 && j == 0);
-            if (a[i] == b[j]) {
-                r.push_back(a[i]);
-                i--;
-                j--;
-            }
-            break;
+            assert(false);
         }
     }
     reverse(r.begin(), r.end());
